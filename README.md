@@ -5,6 +5,15 @@ Yerel çalışan, açık kaynak IPTV oynatıcı (Electron). Xtream Codes ve M3U 
 > **Not:** Bu uygulama yalnızca bir **oynatıcıdır**. Hiçbir içerik, kanal listesi veya
 > abonelik içermez; kendi yasal Xtream/M3U bilgilerini sen girersin.
 
+## Ekran Görüntüleri
+
+|  |  |
+|---|---|
+| ![Filmler](docs/screenshots/01-filmler.png) | ![Diziler](docs/screenshots/02-diziler.png) |
+| ![Detay](docs/screenshots/03-detay.png) | ![Arama](docs/screenshots/04-arama.png) |
+
+> Ekran görüntülerindeki sol kategori adları gizlilik için bulanıklaştırılmıştır.
+
 ## Ön koşullar
 
 - [Node.js](https://nodejs.org/) 18+
