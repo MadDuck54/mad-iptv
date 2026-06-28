@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mad-IPTV</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ============ GİRİŞ ============ -->
+  <div id="login" class="login">
+    <div class="login-bg"></div>
+    <div class="login-scrim"></div>
+    <div class="login-card">
+      <h1 class="logo-text">MAD<span>-IPTV</span></h1>
+      <p class="muted">Kendi yayınların. Abonelik yok.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="xtream">Xtream Codes</button>
+        <button class="tab" data-tab="m3u">M3U Link</button>
+        <span class="tab-glider"></span>
+      </div>
+
+      <form id="form-xtream" class="form">
+        <input name="label" placeholder="Profil adı (örn. Ev)" />
+        <input name="host" placeholder="Sunucu URL (http://host:port)" required />
+        <input name="username" placeholder="Kullanıcı adı" required />
+        <span class="pw-wrap">
+          <input name="password" type="password" placeholder="Şifre" required />
+          <button type="button" class="pw-toggle" title="Göster / gizle">👁</button>
+        </span>
+        <button type="submit" class="btn-primary">Bağlan</button>
+      </form>
+
+      <form id="form-m3u" class="form hidden">
+        <input name="label" placeholder="Profil adı" />
+        <input name="url" placeholder="M3U / m3u_plus link" required />
+        <button type="submit" class="btn-primary">Yükle</button>
+      </form>
+
+      <div id="profiles" class="profiles"></div>
+      <div id="login-status" class="login-status"></div>
+    </div>
+  </div>
+
+  <!-- ============ UYGULAMA ============ -->
+  <div id="app" class="app hidden">
+    <header id="navbar" class="navbar">
+      <div class="nav-left">
+        <span class="logo-text sm">MAD<span>-IPTV</span></span>
+        <nav class="nav-links">
+          <button class="nav-link active" data-section="live">Canlı TV</button>
+          <button class="nav-link" data-section="movie">Filmler</button>
+          <button class="nav-link" data-section="series">Diziler</button>
+          <button class="nav-link" data-section="fav">Listem</button>
+        </nav>
+      </div>
+      <div class="nav-right">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <input id="search" type="search" placeholder="Ara…" />
+        </div>
+        <div class="profile-menu">
+          <button id="profile-btn" class="profile-btn"><span id="profile-name">Profil</span><span class="chev">▾</span></button>
+          <div id="profile-dropdown" class="profile-dropdown hidden">
+            <button id="btn-logout">Profil değiştir / Çıkış</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero" class="hero hidden">
+      <div id="hero-bg" class="hero-bg"></div>
+      <div class="hero-scrim"></div>
+      <div class="hero-content">
+        <span id="hero-tag" class="hero-tag"></span>
+        <h1 id="hero-title" class="hero-title"></h1>
+        <div id="hero-meta" class="hero-meta"></div>
+        <p id="hero-plot" class="hero-plot"></p>
+        <div class="hero-actions">
+          <button id="hero-play" class="hero-play">▶ Oynat</button>
+          <button id="hero-info" class="hero-secondary">ⓘ Bilgi</button>
+        </div>
+      </div>
+    </section>
+
+    <main id="rows" class="rows"></main>
+  </div>
+
+  <!-- ============ DETAY SAYFASI ============ -->
+  <div id="detail" class="detail hidden">
+    <div id="dt-backdrop" class="dt-backdrop"></div>
+    <div class="dt-scrim"></div>
+    <button id="dt-back" class="dt-back">‹ Geri</button>
+    <div class="dt-scroll">
+      <div class="dt-content">
+        <h1 id="dt-title" class="dt-title">—</h1>
+        <div id="dt-meta" class="dt-meta"></div>
+        <div class="dt-actions">
+          <button id="dt-play" class="dt-play">▶ Oynat</button>
+          <button id="dt-fav" class="dt-fav">＋ Listeme Ekle</button>
+          <button id="dt-trailer" class="dt-trailer hidden">▶ Fragman</button>
+        </div>
+        <p id="dt-plot" class="dt-plot"></p>
+        <div id="dt-people" class="dt-people"></div>
+        <div id="dt-episodes" class="dt-episodes"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ OYNATICI PANELİ (video mpv penceresinde) ============ -->
+  <div id="player-overlay" class="player-overlay hidden">
+    <div class="po-backdrop"></div>
+    <div class="po-window">
+      <button id="btn-close-player" class="po-close" title="Kapat (Esc)">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="np-hero">
+        <div id="np-art" class="np-art"></div>
+        <div class="np-scrim"></div>
+        <div class="np-head">
+          <span id="live-badge" class="live-badge hidden">CANLI</span>
+          <span id="np-engine" class="engine">mpv</span>
+          <div id="np-status" class="np-status">Yükleniyor…</div>
+          <h3 id="now-title">—</h3>
+        </div>
+      </div>
+
+      <div class="po-body">
+        <!-- transport -->
+        <div class="transport">
+          <button id="btn-back10" class="tp-btn sm" title="10 sn geri (←)">⏪</button>
+          <button id="btn-playpause" class="tp-btn" title="Oynat/Duraklat (Space)">⏸</button>
+          <button id="btn-fwd10" class="tp-btn sm" title="10 sn ileri (→)">⏩</button>
+          <span id="tp-cur" class="tp-time">0:00</span>
+          <input id="tp-seek" class="tp-seek" type="range" min="0" max="1000" value="0" />
+          <span id="tp-dur" class="tp-time">0:00</span>
+          <button id="btn-mute" class="tp-btn sm" title="Sessiz (M)">🔊</button>
+          <button id="btn-fs" class="tp-btn sm" title="Tam ekran (F)">⛶</button>
+          <button id="btn-fav" class="fav-btn" title="Listeme ekle">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8L12 17l-5.3 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- track seçiciler -->
+        <div class="tracks">
+          <label class="trk"><span>🔊 Ses</span><select id="sel-audio"><option>—</option></select></label>
+          <label class="trk"><span>💬 Altyazı</span><select id="sel-sub"><option value="no">Kapalı</option></select></label>
+          <label class="trk"><span>🎚 Kalite</span><select id="sel-quality"><option>—</option></select></label>
+          <label class="trk"><span>⏱ Hız</span><select id="sel-speed">
+            <option value="0.5">0.5×</option><option value="0.75">0.75×</option>
+            <option value="1" selected>1×</option><option value="1.25">1.25×</option>
+            <option value="1.5">1.5×</option><option value="2">2×</option>
+          </select></label>
+          <button id="btn-loadsub" class="loadsub" title="Bilgisayardan .srt yükle">+ Altyazı dosyası</button>
+        </div>
+
+        <div id="po-error" class="po-error-inline hidden">
+          <span id="po-error-msg">Yayın açılamadı</span>
+          <button id="btn-retry">Yeniden dene</button>
+        </div>
+
+        <div id="now-epg" class="now-epg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

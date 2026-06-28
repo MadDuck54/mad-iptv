@@ -1,0 +1,35 @@
+{
+  "name": "mad-iptv",
+  "version": "0.1.0",
+  "description": "Mad-IPTV — yerel IPTV oynatıcı (M3U + Xtream Codes), Electron",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac"
+  },
+  "author": "talha",
+  "license": "MIT",
+  "build": {
+    "appId": "com.mad.iptv",
+    "productName": "Mad-IPTV",
+    "asar": true,
+    "files": [
+      "src/**/*"
+    ],
+    "extraResources": [
+      { "from": "mpv-config", "to": "mpv-config" }
+    ],
+    "mac": {
+      "category": "public.app-category.video",
+      "target": [
+        "dir"
+      ],
+      "identity": null
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

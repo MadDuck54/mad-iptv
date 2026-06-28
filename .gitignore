@@ -1,0 +1,18 @@
+# Bağımlılıklar
+node_modules/
+
+# Build çıktısı
+dist/
+build/
+
+# Yerel önbellek
+.npm-cache/
+
+# Kullanıcı verisi (profiller, favoriler — şifre içerebilir, repoya girmez)
+store.json
+
+# OS / editör
+.DS_Store
+*.log
+.vscode/
+.idea/
