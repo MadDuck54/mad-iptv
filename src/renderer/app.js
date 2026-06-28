@@ -655,7 +655,7 @@ async function showHero(it) {
     const d = sec === 'series' ? await state.xt.seriesInfo(it.id) : await state.xt.vodInfo(it.id);
     if (state.section !== sec || state._heroItem !== it) return; // bölüm değiştiyse iptal
     const info = (d && d.info) || {};
-    const bd = (info.backdrop_path && info.backdrop_path[0]) || info.movie_image;
+    const bd = pickBackdrop(info, info.movie_image);
     if (bd) $('#hero-bg').style.backgroundImage = `url("${bd}")`;
     $('#hero-meta').innerHTML = buildMeta(info);
     $('#hero-plot').textContent = info.plot || info.description || '';
@@ -749,6 +749,19 @@ function buildPeople(info) {
   return out.join('');
 }
 
+// Bazı Xtream sunucuları backdrop_path'i dizi yerine "Array" string'i olarak döndürür
+// → backdrop_path[0] === "A" tuzağı. Sadece gerçek dizi içindeki http(s) URL'i kabul et,
+// yoksa sırayla verilen yedeklere (movie_image / cover / logo) düş.
+function pickBackdrop(info, ...fallbacks) {
+  const bp = info && info.backdrop_path;
+  if (Array.isArray(bp)) {
+    const u = bp.find((x) => typeof x === 'string' && /^https?:\/\//.test(x));
+    if (u) return u;
+  }
+  for (const f of fallbacks) if (typeof f === 'string' && f) return f;
+  return '';
+}
+
 function fillDetail({ backdrop, title, meta, plot, people, trailer }) {
   if (backdrop) $('#dt-backdrop').style.backgroundImage = `url("${backdrop}")`;
   if (title) $('#dt-title').textContent = title;
@@ -770,7 +783,7 @@ async function openMovieDetail(it) {
     const d = await state.xt.vodInfo(it.id);
     const info = d.info || {}; const md = d.movie_data || {};
     fillDetail({
-      backdrop: (info.backdrop_path && info.backdrop_path[0]) || info.movie_image || it.logo,
+      backdrop: pickBackdrop(info, info.movie_image, it.logo),
       title: info.name || it.name,
       meta: buildMeta(info),
       plot: info.plot || info.description || '',
@@ -779,7 +792,7 @@ async function openMovieDetail(it) {
     });
     const ext = md.container_extension || (it.raw && it.raw.container_extension) || 'mp4';
     const url = state.xt.vodUrl(it.id, ext);
-    const land = (info.backdrop_path && info.backdrop_path[0]) || it.logo;
+    const land = pickBackdrop(info, it.logo);
     const nm = info.name || it.name;
     setDetailPlay(() => startPlay({ ...it, name: nm }, url, false,
       { key: itemKey(it), section: 'movie', name: nm, logo: land, id: it.id, url, container: ext }));
@@ -797,7 +810,7 @@ async function openSeriesDetail(it) {
     const d = await state.xt.seriesInfo(it.id);
     const info = d.info || {}; const episodes = d.episodes || {};
     fillDetail({
-      backdrop: (info.backdrop_path && info.backdrop_path[0]) || info.cover || it.logo,
+      backdrop: pickBackdrop(info, info.cover, it.logo),
       title: info.name || it.name,
       meta: buildMeta(info),
       plot: info.plot || info.description || '',
