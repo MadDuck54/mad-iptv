@@ -16,3 +16,8 @@ store.json
 *.log
 .vscode/
 .idea/
+
+# uosc — üçüncü parti mpv UI, repoya dahil değil (isteyen ayrıca kurar)
+mpv-config/scripts/
+mpv-config/script-opts/
+mpv-config/fonts/
